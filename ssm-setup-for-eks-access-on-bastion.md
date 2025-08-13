@@ -1,9 +1,4 @@
-Always show details
-
-Copy
-# Let's create the README file with the provided content.
-
-readme_content = """# Setting Up Amazon SSM Agent on EKS Cluster & Bastion
+# Setting Up Amazon SSM Agent on EKS Cluster & Bastion
 
 This guide walks you through configuring AWS Systems Manager (SSM) Agent to work with an **EKS cluster** and a **Bastion EC2 instance**, along with IAM role policies and connectivity setup.
 
@@ -38,11 +33,12 @@ Attach the following AWS managed and custom inline policies to the IAM role.
         }
     ]
 }
-📄 eks-full-access-policy
-json
-Always show details
+```
 
-Copy
+---
+
+#### 📄 eks-full-access-policy
+```json
 {
     "Version": "2012-10-17",
     "Statement": [
@@ -73,79 +69,69 @@ Copy
         }
     ]
 }
-2️⃣ Attach the Role to Bastion EC2 Instance
-Go to EC2 Console → Select your Bastion EC2 instance → Actions → Security → Modify IAM role → Attach the role created above.
+```
 
-3️⃣ Verify Access
-SSH into the Bastion EC2 instance.
+---
 
-Ensure the IAM role is attached:
+## 2️⃣ Attach the Role to Bastion EC2 Instance
 
-bash
-Always show details
+- Go to **EC2 Console** → **Select your Bastion EC2 instance** → **Actions → Security → Modify IAM role** → Attach the role created above.
 
-Copy
+---
+
+## 3️⃣ Verify Access
+
+- SSH into the Bastion EC2 instance.
+- Ensure the IAM role is attached:
+```bash
 curl http://169.254.169.254/latest/meta-data/iam/security-credentials/
-Restart the instance if necessary:
-
-bash
-Always show details
-
-Copy
+```
+- Restart the instance if necessary:
+```bash
 sudo reboot
-4️⃣ Connect to the EKS Cluster from Bastion
+```
+
+---
+
+## 4️⃣ Connect to the EKS Cluster from Bastion
+
 Follow the official AWS documentation for EKS access:
 
-📄 References
+📄 **References**
+- [Update kubeconfig for EKS](https://docs.aws.amazon.com/cli/latest/reference/eks/update-kubeconfig.html)  
+- [Install kubectl](https://docs.aws.amazon.com/eks/latest/userguide/install-kubectl.html)  
+- [EKS Overview](https://docs.aws.amazon.com/eks/latest/userguide/what-is-eks.html)  
 
-Update kubeconfig for EKS
+---
 
-Install kubectl
+### Steps
 
-EKS Overview
-
-Steps
-Configure AWS CLI on Bastion:
-
-bash
-Always show details
-
-Copy
+1. **Configure AWS CLI** on Bastion:
+```bash
 aws configure
-(Provide the IAM user Access Key and Secret Key.)
+```
+(Provide the IAM user **Access Key** and **Secret Key**.)
 
-Add IAM User Access in EKS Console:
+2. **Add IAM User Access in EKS Console**:
+    - Navigate to **EKS → Access → IAM access entries**.
+    - **Create access entry**:
+        - Select your EKS cluster role.
+        - Type = **Standard**
+        - Add Access Policies:
+            - `AmazonEKSAdminPolicy`
+            - `AmazonEKSClusterAdminPolicy`
+    - Provide the **IAM user ARN**.
 
-Navigate to EKS → Access → IAM access entries.
-
-Create access entry:
-
-Select your EKS cluster role.
-
-Type = Standard
-
-Add Access Policies:
-
-AmazonEKSAdminPolicy
-
-AmazonEKSClusterAdminPolicy
-
-Provide the IAM user ARN.
-
-Update kubeconfig on Bastion:
-
-bash
-Always show details
-
-Copy
+3. **Update kubeconfig** on Bastion:
+```bash
 aws eks --region <region> update-kubeconfig --name <cluster_name>
-Verify Cluster Access:
+```
 
-bash
-Always show details
-
-Copy
+4. **Verify Cluster Access**:
+```bash
 kubectl get nodes
-✅ Your Bastion EC2 instance should now be able to manage the EKS cluster via SSM.
-"""
+```
 
+---
+
+✅ **Your Bastion EC2 instance should now be able to manage the EKS cluster via SSM.**
